@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import useStore from './store';
 import './App.css';
+
 import PokemonInfo from './components/PokemoneInfo';
 import PokemonFilter from './components/PokemonFilter';
 import PokemonTable from './components/PokemonTable';
-import PokemonContext from './PokemonContext';
 
 const Title = styled.h1`
   text-align: center;
@@ -21,29 +22,30 @@ const Container = styled.div`
 `;
 
 function App() {
-  const [filter, setFilter] = React.useState("");
-  const [pokemon, setPokemon] = React.useState([]);
-  const [selectedItem, setSelectedItem] = React.useState(null);
+  const pokemon = useStore((state) => state.pokemon);
+  const setPokemon = useStore((state) => state.setPokemon);
 
   React.useEffect(() => {
-    fetch("http://localhost:3000/starting-react/pokemon.json")
+    fetch("/starting-react/pokemon.json")
       .then((response) => response.json())
-      .then((data) => setPokemon(data));
-  }, []);
+      .then(setPokemon);
+  }, [setPokemon]);
+
+  if (!pokemon) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <PokemonContext.Provider value={{pokemon, setPokemon ,filter, setFilter, selectedItem, setSelectedItem}}>
-      <Container>
-        <Title>Pokemon Search</Title>
-        <TwoColumnLayout> 
-          <div>
-            <PokemonFilter />
-            <PokemonTable  />
-          </div>
-          <PokemonInfo />
-        </TwoColumnLayout>
-      </Container>
-    </PokemonContext.Provider>
+    <Container>
+      <Title>Pokemon Search</Title>
+      <TwoColumnLayout> 
+        <div>
+          <PokemonFilter />
+          <PokemonTable  />
+        </div>
+        <PokemonInfo />
+      </TwoColumnLayout>
+    </Container>
   );
 }
 

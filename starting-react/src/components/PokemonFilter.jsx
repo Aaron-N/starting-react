@@ -1,6 +1,6 @@
 import React from 'react';
+import useStore from '../store';
 import styled from '@emotion/styled';
-import PokemonContext from '../PokemonContext';
 
 const Input = styled.input`
   width: 100%;
@@ -9,7 +9,8 @@ const Input = styled.input`
 `;
 
 const PokemonFilter = () => {
-  const {filter, setFilter} = React.useContext(PokemonContext);
+  const filter = useStore((state) => state.filter);
+  const setFilter = useStore((state) => state.setFilter);
   return (
     <Input 
     value={(filter)}
